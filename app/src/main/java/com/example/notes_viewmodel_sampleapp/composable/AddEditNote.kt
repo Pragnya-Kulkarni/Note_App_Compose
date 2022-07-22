@@ -40,18 +40,20 @@ fun AddEditNote(
                value = title,
                onValueChange = { newText ->
                    title = newText
-               }
+               },
+               maxLines = 2
            )
            TextField(
                modifier = Modifier.fillMaxWidth(),
                value = description,
                onValueChange = { newText ->
                    description = newText
-               }
+               },
+               maxLines = 15
            )
            Button(
-               modifier = Modifier
-                   .align(alignment = Alignment.CenterHorizontally),
+               modifier = Modifier.fillMaxWidth().padding(5.dp)
+                  ,
                onClick = {
                    if (isEdit) {
                        selectedNote.title = title
