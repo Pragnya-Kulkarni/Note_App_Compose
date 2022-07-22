@@ -1,22 +1,15 @@
 package com.example.notes_viewmodel_sampleapp
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import com.example.notes_viewmodel_sampleapp.model.Note
 
 class NoteViewModel : ViewModel() {
 
-    var listOfNotes: MutableList<Note>
-    private var _notesList = MutableLiveData<List<Note>>()
-    val notesList: LiveData<List<Note>>
-        get() = _notesList
 
-    init {
-        _notesList.value = getNotes()
-        listOfNotes = getNotes().toMutableList()
-       // setSelectedNote(Note(0, "", ""))
-    }
+    private val _notesList = getNotes().toMutableStateList()
+    val notesList: List<Note>
+        get() = _notesList
 
     private lateinit var _selectedNote: Note
     val selectedNote: Note
@@ -28,7 +21,7 @@ class NoteViewModel : ViewModel() {
         _selectedNote = selectedNote
     }
 
-    fun getNotes(): List<Note> {
+    private fun getNotes(): List<Note> {
         return listOf(
             Note(
                 1, "Note1",
@@ -76,28 +69,21 @@ class NoteViewModel : ViewModel() {
 
     fun addOrUpdateNotes(id: Int, title: String, description: String) {
         if (id > 0) {
-            notesList.value?.let {
-              val note= it.find { note-> note.id== id }
-                note?.let {
-                    note?.title= title
-                    note?.description= description
-                }
-                _notesList.postValue(listOfNotes)
+            val noteToEdit = _notesList.find { note -> note.id == id }
+            noteToEdit?.let {
+                it.title = title
+                it.description = description
             }
         } else {
             var count = 1
-            notesList.value?.let {
-                count = it.count()+1
-            }
-            listOfNotes?.add(Note(count, title = title, description = description))
-            _notesList.postValue(listOfNotes)
+            if (_notesList.count() > 0)
+                count = _notesList.count() + 1
 
+            _notesList.add(Note(count, title = title, description = description))
         }
     }
 
     fun deleteNotes(note: Note) {
-        val note = listOfNotes.find { n -> n.id == note.id }
-        listOfNotes?.remove(note)
-        _notesList.value = listOfNotes
+        _notesList?.remove(note)
     }
 }

@@ -4,8 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.material.*
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
@@ -21,18 +20,20 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             Notes_ViewModel_SampleAppTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
+                Scaffold(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
+                    topBar = {
+                        TopAppBar(
+                            title = { Text("Notes App") },
+                            backgroundColor = MaterialTheme.colors.primary
+                        )
+                    },
                 ) {
-
                     val notesViewModel = ViewModelProvider(this ).get(NoteViewModel::class.java)
-                    // 2. to get navcontroller we have method called rememberNavController
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = "list"){
                         composable("list"){
-                            NotesScreen(navController = navController,notesViewModel.notesList, notesViewModel::setSelectedNote,this@MainActivity )
+                            NotesScreen(navController = navController,notesViewModel.notesList, notesViewModel::setSelectedNote,notesViewModel::deleteNotes)
                         }
                         composable("edit"){
                             AddEditNote(navController = navController,notesViewModel::addOrUpdateNotes, notesViewModel.selectedNote, true)
